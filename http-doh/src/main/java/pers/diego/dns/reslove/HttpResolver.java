@@ -1,9 +1,8 @@
 package pers.diego.dns.reslove;
 
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 import pers.diego.dns.dto.Packet;
-import pers.diego.dns.exceptions.ConnectionErrorException;
-import pers.diego.dns.exceptions.ErrorType;
 import pers.diego.dns.util.Util;
 
 import java.io.DataInputStream;
@@ -12,19 +11,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-import java.util.concurrent.*;
 
 /**
  * @author kang.zhang
  * @date 2021/11/26 19:27
  */
+@Component
 
-@Setter
-public class HttpResolveTask implements Resolver {
+public class HttpResolver implements Resolver {
+    @Setter
     private  int connectTimeout;
-    private  int readTimeout = 4000;
-    private  URL url;
+    private final int readTimeout = 4000;
+    @Setter
     private  Packet packet;
 
 
@@ -35,22 +33,8 @@ public class HttpResolveTask implements Resolver {
 
 
 
-
     @Override
-    public CompletableFuture<Packet> resolveAsync(Packet request, ThreadPoolExecutor threadPoolExecutor) {
-        CompletableFuture<Packet> ret = new CompletableFuture<>();
-        threadPoolExecutor.submit(() -> {
-            try{
-                ret.complete(resolve(request));
-            }catch (Throwable e){
-                ret.completeExceptionally(e);
-            }
-        });
-        return ret;
-    }
-
-    @Override
-    public Packet resolve(Packet request) throws IOException {
+    public Packet resolve(Packet request,URL url) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
         conn.setConnectTimeout(connectTimeout);
@@ -64,13 +48,19 @@ public class HttpResolveTask implements Resolver {
         conn.setRequestProperty("Accept", "application/dns-message");
 
         try (OutputStream os = conn.getOutputStream()) {
-            os.write(packet.getBuf().array());
+            os.write(request.getBuf().array());
             os.flush();
             InputStream is = conn.getInputStream();
             DataInputStream dataInputStream = new DataInputStream(is);
             int length = conn.getContentLength();
             return Util.readPacket(length, dataInputStream);
         }
+    }
+
+    @Override
+    public Packet resolve(Packet packet, String address, int port) throws IOException {
+        URL url = new URL("https", address, String.valueOf(port));
+        return resolve(packet,url);
     }
 
 }

@@ -5,28 +5,40 @@ import pers.diego.dns.exceptions.DomainTreeBuildException;
 import pers.diego.dns.exceptions.ErrorType;
 
 import java.io.*;
-import java.util.Scanner;
 
 /**
  * @author kang.zhang
  * @date 2021/11/25 21:50
  */
 public class DomainTreeUtil {
-    private String gfwFilePath;
     private static DomainTree gfWDomainTree;
-    public DomainTree getGFWDomainTree(){
+    private static DomainTree cnDomainTree;
+    public static DomainTree getGfwDomainTree(String path){
         if(gfWDomainTree == null){
-            synchronized(this){
-                gfWDomainTree = buildGfwDomainTree();
+            synchronized(DomainTreeUtil.class){
+                gfWDomainTree = buildDomainTree(path);
             }
         }
 
         return gfWDomainTree;
     }
 
-    private DomainTree buildGfwDomainTree() {
+    public static DomainTree getCnDomainTree(String path){
+        if(cnDomainTree == null){
+            synchronized(DomainTreeUtil.class){
+                cnDomainTree = buildDomainTree(path);
+            }
+        }
+
+        return gfWDomainTree;
+    }
+
+
+    private static DomainTree buildDomainTree(String path) {
         DomainTree domainTree = new DomainTree();
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(gfwFilePath))){
+        InputStream resourceAsStream = DomainTreeUtil.class.getClassLoader().getResourceAsStream(path);
+        InputStreamReader inputStreamReader = new InputStreamReader(resourceAsStream);
+        try (BufferedReader bufferedReader = new BufferedReader(inputStreamReader)){
             String line = null;
             while((line = bufferedReader.readLine()) != null){
                 domainTree.insertDomain(line);
@@ -40,17 +52,4 @@ public class DomainTreeUtil {
         return domainTree;
     }
 
-    public static void main(String[] args) {
-        DomainTreeUtil domainTreeUtil = new DomainTreeUtil();
-        domainTreeUtil.gfwFilePath = "C:\\Users\\zhang\\IdeaProjects\\JDoH\\http-doh\\src\\main\\resources\\domain\\gfw.txt";
-        DomainTree gfwDomainTree = domainTreeUtil.getGFWDomainTree();
-        String domain = null;
-        Scanner scanner = new Scanner(System.in);
-        while((domain = scanner.next()) != null){
-            boolean b = gfwDomainTree.include(domain);
-            System.out.println(b);
-        }
-
-
-    }
 }

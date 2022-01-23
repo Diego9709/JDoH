@@ -3,6 +3,7 @@ package pers.diego.dns.reslove;
 import pers.diego.dns.dto.Packet;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -13,7 +14,17 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public interface Resolver extends AutoCloseable{
 
-    CompletableFuture<Packet> resolveAsync(final Packet request, final ThreadPoolExecutor threadPoolExecutor);
+    default CompletableFuture<Packet> resolveAsync(final Packet request, final URL url,final Executor executor){
+        final CompletableFuture<Packet> ret = new CompletableFuture<>();
+        executor.execute(() -> {
+            try{
+                ret.complete(resolve(request,url));
+            }catch (Throwable e){
+                ret.completeExceptionally(e);
+            }
+        });
+        return ret;
+    }
 
     /**
      * This must block on resolving the given query
@@ -21,5 +32,8 @@ public interface Resolver extends AutoCloseable{
      * @return
      * @throws Exception
      */
-    Packet resolve(final Packet request) throws IOException;
+    Packet resolve(final Packet request, URL url) throws IOException;
+
+
+    Packet resolve(final Packet packet, String address, int port) throws IOException;
 }
