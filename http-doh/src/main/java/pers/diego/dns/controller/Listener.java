@@ -57,7 +57,7 @@ public class Listener {
     }
 
     @RequestMapping(value = "/dns-query/set-mod", method = {RequestMethod.POST})
-    public CommonResult delDomain(@RequestParam("mod") int mod) {
+    public CommonResult setMod(@RequestParam("mod") int mod) {
         if (mod == 1){
             return dnsQueryService.setAsBlackMod();
         }else if(mod == 0){
