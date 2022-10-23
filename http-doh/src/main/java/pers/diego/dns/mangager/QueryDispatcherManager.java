@@ -1,5 +1,7 @@
 package pers.diego.dns.mangager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,8 +39,6 @@ public class QueryDispatcherManager {
     @Value("${dns.servers.udp.port}")
     private int  udpPort;
 
-    @Value("${dns.servers.http.url}")
-    private String  httpUrl;
 
     @Value("${dns.mod}")
     private int mod;
@@ -49,6 +49,14 @@ public class QueryDispatcherManager {
     @Value("${dns.domain.cnPath}")
     private String cnPath;
 
+    private URL url;
+
+    private Logger logger = LoggerFactory.getLogger(QueryDispatcherManager.class.getName());
+
+    @Autowired
+    public void setUrl(URL url) {
+        this.url = url;
+    }
 
     @Autowired
     public void setThreadPoolExecutor(@Qualifier("threadPoolExecutor") Executor executor) {
@@ -67,34 +75,47 @@ public class QueryDispatcherManager {
 
     public HttpEntity<byte[]> dispatchHttpQuery(byte[] request) throws IOException {
 
-        return new HttpEntity<>(this.dispatchUdpQuery(request));
+        return new HttpEntity<>(dispatchUdpQuery(request));
 
+    }
+
+    public void setMod_0(){
+        this.mod = 0;
+    }
+    public void setMod_1(){
+        this.mod = 1;
     }
 
     public byte[] dispatchUdpQuery(byte[] request) throws IOException {
 
         Packet packet = new Packet(request);
+
         List<String> domains = packet.getQuestions().stream().map(question -> question.getName().getDomain()).collect(Collectors.toList());
+
         if(mod == 1){
             DomainTree gfwDomainTree = DomainTreeUtil.getGfwDomainTree(gfwPath);
             for(String domain : domains){
                 if(gfwDomainTree.include(domain)){
-                    Packet resolve = httpResolver.resolve(packet, new URL(httpUrl));
+                    logger.info("new gfw query: " + domains + "\n");
+                    Packet resolve = httpResolver.resolve(packet, url);
                     return resolve.copyRaw();
                 }
             }
+            logger.info("new cn query: " + domains + "\n");
             byte[] raw = udpResolver.resolve(packet, udpAddress,udpPort).copyRaw();
             return  raw;
         }else{
             DomainTree cnDomainTree = DomainTreeUtil.getCnDomainTree(cnPath);
             for(String domain : domains){
                 if(cnDomainTree.include(domain)){
+                    logger.info("new cn query: " + domains + "\n");
                     Packet resolve = udpResolver.resolve(packet, udpAddress,udpPort);
                     return resolve.copyRaw();
                 }
 
             }
-            Packet resolve = httpResolver.resolve(packet, new URL(httpUrl));
+            logger.info("new gfw query: " + domains + "\n");
+            Packet resolve = httpResolver.resolve(packet, this.url);
             return  resolve.copyRaw();
         }
 

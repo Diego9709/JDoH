@@ -1,10 +1,9 @@
 package pers.diego.dns.reslove;
 
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pers.diego.dns.dto.Packet;
-import pers.diego.dns.componment.UdpClient;
+import pers.diego.dns.component.UdpClient;
 
 import java.io.IOException;
 import java.net.URL;

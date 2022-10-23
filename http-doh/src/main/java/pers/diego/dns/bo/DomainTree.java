@@ -49,6 +49,36 @@ public class DomainTree implements Serializable {
         }
     }
 
+    public void deleteDomain(String domain){
+        if(include(domain)){
+            String[] strings = domain.split("\\.");
+
+            int index = strings.length - 1;
+            Map<String, HashSet> map = domainTree.get("*");
+            if(map.containsKey(strings[index])){
+                HashSet set = map.get(strings[index]);
+                if(set.contains(strings[--index])){
+                    set.remove(strings[--index]);
+                }
+            }
+
+            index = strings.length - 1;
+            if(domainTree.containsKey(strings[index])){
+                Map<String, HashSet> map1 = domainTree.get(strings[index]);
+                if (map1.containsKey(strings[--index])){
+                    if(index == 0){
+                        map1.remove(strings[index]);
+                    }else {
+                        HashSet set = map1.get(strings[index]);
+                        if(set.contains(strings[--index])){
+                            set.remove(strings[index]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public boolean include(String domain){
         if(domain.length() < 2){
             return true;

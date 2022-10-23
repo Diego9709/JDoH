@@ -3,6 +3,7 @@ package pers.diego.dns.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
+import pers.diego.dns.bo.CommonResult;
 import pers.diego.dns.mangager.QueryDispatcherManager;
 
 import java.io.IOException;
@@ -26,5 +27,14 @@ public class DnsQueryService {
     public HttpEntity<byte[]> query(byte[] request) throws IOException {
         HttpEntity<byte[]> httpEntity = queryDispatcherManager.dispatchHttpQuery(request);
         return httpEntity;
+    }
+
+    public CommonResult setAsBlackMod(){
+        queryDispatcherManager.setMod_1();
+        return CommonResult.success("设置成功");
+    }
+    public CommonResult setAsWhiteMod(){
+        queryDispatcherManager.setMod_0();
+        return CommonResult.success("设置成功");
     }
 }

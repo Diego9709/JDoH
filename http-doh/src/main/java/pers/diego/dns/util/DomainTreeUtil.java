@@ -33,13 +33,31 @@ public class DomainTreeUtil {
         return gfWDomainTree;
     }
 
+    public static boolean addDomain(String domain){
+        if(gfWDomainTree == null){
+            return false;
+        }
+        gfWDomainTree.insertDomain(domain);
+        return true;
+
+    }
+
+    public static boolean deleteDomain(String domain){
+        if(gfWDomainTree == null){
+            return false;
+        }
+        gfWDomainTree.deleteDomain(domain);
+        return true;
+
+    }
+
 
     private static DomainTree buildDomainTree(String path) {
         DomainTree domainTree = new DomainTree();
         InputStream resourceAsStream = DomainTreeUtil.class.getClassLoader().getResourceAsStream(path);
         InputStreamReader inputStreamReader = new InputStreamReader(resourceAsStream);
         try (BufferedReader bufferedReader = new BufferedReader(inputStreamReader)){
-            String line = null;
+            String line;
             while((line = bufferedReader.readLine()) != null){
                 domainTree.insertDomain(line);
             }
@@ -51,5 +69,6 @@ public class DomainTreeUtil {
         }
         return domainTree;
     }
+
 
 }

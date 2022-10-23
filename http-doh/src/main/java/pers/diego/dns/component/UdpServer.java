@@ -1,4 +1,4 @@
-package pers.diego.dns.componment;
+package pers.diego.dns.component;
 
 
 import org.slf4j.Logger;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import pers.diego.dns.dto.Packet;
 import pers.diego.dns.mangager.QueryDispatcherManager;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -41,10 +40,11 @@ public class UdpServer {
         this.executor = executor;
     }
 
-    @PostConstruct
+
     public void listen() throws IOException {
         DatagramSocket socket = new DatagramSocket(port);
         while(true){
+            logger.info("Udp server start  on port:" + this.port);
             DatagramPacket request = new DatagramPacket(new byte[1024], 1024);
             socket.receive(request);
             Handler handler = new Handler(socket,request);
@@ -67,7 +67,6 @@ public class UdpServer {
         @Override
         public void run() {
             Packet packet = new Packet(datagramPacket.getData());
-            logger.info("new dns query: " + packet);
             try {
                 byte[] response = queryDispatcherManager.dispatchUdpQuery(datagramPacket.getData());
                 DatagramPacket ans = new DatagramPacket(response,response.length,datagramPacket.getAddress(),datagramPacket.getPort());

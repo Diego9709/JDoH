@@ -1,5 +1,6 @@
-package pers.diego.dns.componment;
+package pers.diego.dns.component;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import pers.diego.dns.dto.Packet;
@@ -7,7 +8,6 @@ import pers.diego.dns.dto.Packet;
 import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 
 /**
  * @author kang.zhang
@@ -21,14 +21,17 @@ public class UdpClient {
         DatagramSocket datagramSocket = new DatagramSocket();
         datagramSocket.setSoTimeout(5000);
         InetAddress inetAddress = InetAddress.getByName(address);
-        ByteBuffer response = ByteBuffer.allocate(512);
-        DatagramPacket datagramPacket = new DatagramPacket(packet.getBuf().array(),packet.getLength(),inetAddress,port);
+        ByteBuffer response = ByteBuffer.allocate(1024);
+        DatagramPacket datagramPacket = new DatagramPacket(packet.copyRaw(), packet.copyRaw().length,inetAddress,port);
         DatagramPacket responsePacket = new DatagramPacket(response.array(),response.array().length);
         datagramSocket.send(datagramPacket);
-        datagramSocket.receive(responsePacket);
+        try{
+            datagramSocket.receive(responsePacket);
+        } catch (SocketTimeoutException e) {
+            datagramSocket.send(datagramPacket);
+        }
         datagramSocket.close();
-        ByteBuffer wrapPacket = ByteBuffer.wrap(responsePacket.getData());
-        return new Packet(wrapPacket);
+        return new Packet(responsePacket.getData());
 
     }
 }
