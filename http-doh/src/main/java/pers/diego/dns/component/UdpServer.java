@@ -43,8 +43,8 @@ public class UdpServer {
 
     public void listen() throws IOException {
         DatagramSocket socket = new DatagramSocket(port);
+        logger.info("Udp server start  on port:" + this.port);
         while(true){
-            logger.info("Udp server start  on port:" + this.port);
             DatagramPacket request = new DatagramPacket(new byte[1024], 1024);
             socket.receive(request);
             Handler handler = new Handler(socket,request);

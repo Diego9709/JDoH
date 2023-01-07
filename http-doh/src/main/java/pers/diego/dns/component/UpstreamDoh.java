@@ -15,13 +15,19 @@ import java.net.URL;
 
 @Component
 public class UpstreamDoh {
-    @Value("${dns.servers.http.url}")
-    private String  httpUrl;
 
+    @Value("${dns.servers.http.url}")
+    private String  defaultHttpUrl;
+
+    private String httpUrl;
+
+    public void setHttpUrl(String httpUrl) {
+        this.httpUrl = httpUrl;
+    }
 
     @Bean()
     public URL getUrl() throws MalformedURLException {
-        if(httpUrl != null && httpUrl.length() > 0){
+        if(httpUrl != null){
             try {
                 return new URL(httpUrl);
             } catch (MalformedURLException e) {
@@ -29,6 +35,6 @@ public class UpstreamDoh {
             }
 
         }
-        return new URL("https://dns.aliyun.com");
+        return new URL(defaultHttpUrl);
     }
 }

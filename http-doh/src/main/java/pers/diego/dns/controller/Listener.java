@@ -1,9 +1,7 @@
 package pers.diego.dns.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -65,6 +63,11 @@ public class Listener {
         }else {
             return CommonResult.failed("Mod param can only be set with 0(white) or 1(black)");
         }
+    }
+    @RequestMapping(value = "/dns-query/set-doh", method = {RequestMethod.POST})
+    public CommonResult setMod(@RequestParam("url") String url) {
+        return domainService.changeUpStreamDoh(url);
+
     }
 
     private HttpEntity<byte[]> dnsQuery(final byte[] request) throws Exception {

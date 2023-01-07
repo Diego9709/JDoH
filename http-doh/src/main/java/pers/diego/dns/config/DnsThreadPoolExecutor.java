@@ -19,9 +19,9 @@ public class DnsThreadPoolExecutor{
     public Executor threadPoolExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         // 设置线程池核心容量
-        executor.setCorePoolSize(Integer.MAX_VALUE);
+        executor.setCorePoolSize(256);
         // 设置线程池最大容量
-        executor.setMaxPoolSize(Integer.MAX_VALUE);
+        executor.setMaxPoolSize(512);
         // 设置任务队列长度
         executor.setQueueCapacity(500);
         // 设置线程超时时间
