@@ -25,7 +25,6 @@ public class UpstreamDoh {
         this.httpUrl = httpUrl;
     }
 
-    @Bean()
     public URL getUrl() throws MalformedURLException {
         if(httpUrl != null){
             try {

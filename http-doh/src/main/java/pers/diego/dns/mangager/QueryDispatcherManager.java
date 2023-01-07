@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 import pers.diego.dns.bo.DomainTree;
+import pers.diego.dns.component.UpstreamDoh;
 import pers.diego.dns.dto.Packet;
 import pers.diego.dns.reslove.HttpResolver;
 import pers.diego.dns.reslove.UdpResolver;
@@ -49,13 +50,14 @@ public class QueryDispatcherManager {
     @Value("${dns.domain.cnPath}")
     private String cnPath;
 
-    private URL url;
+
+    private UpstreamDoh upstreamDoh;
 
     private Logger logger = LoggerFactory.getLogger(QueryDispatcherManager.class.getName());
 
     @Autowired
-    public void setUrl(URL url) {
-        this.url = url;
+    public void setUpstreamDoh(UpstreamDoh upstreamDoh) {
+        this.upstreamDoh = upstreamDoh;
     }
 
     @Autowired
@@ -94,6 +96,7 @@ public class QueryDispatcherManager {
 
         if(mod == 1){
             DomainTree gfwDomainTree = DomainTreeUtil.getGfwDomainTree(gfwPath);
+            URL url = this.upstreamDoh.getUrl();
             for(String domain : domains){
                 if(gfwDomainTree.include(domain)){
                     logger.info("new gfw query: " + domains + "\n");
@@ -115,7 +118,8 @@ public class QueryDispatcherManager {
 
             }
             logger.info("new gfw query: " + domains + "\n");
-            Packet resolve = httpResolver.resolve(packet, this.url);
+            URL url = this.upstreamDoh.getUrl();
+            Packet resolve = httpResolver.resolve(packet, url);
             return  resolve.copyRaw();
         }
 

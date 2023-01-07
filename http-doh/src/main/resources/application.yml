@@ -17,5 +17,5 @@ dns:
       url_backup: https://dns.aliyun/com/dns-query
   mod: 1
   domain:
-    gfwPath: /domain/gfw.txt
-    cnPath: /domain/gfw.txt
+    gfwPath: domain/gfw.txt
+    cnPath: domain/gfw.txt
