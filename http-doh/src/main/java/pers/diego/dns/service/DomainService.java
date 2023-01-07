@@ -55,7 +55,7 @@ public class DomainService {
             return CommonResult.failed("Url 格式错误！");
 
         }
-        this.upstreamDoh.setHttpUrl(url);
+        this.upstreamDoh.setDOhUrl(url);
         logger.info("修改上游DOH为:" + url);
         return CommonResult.success("修改成功");
 

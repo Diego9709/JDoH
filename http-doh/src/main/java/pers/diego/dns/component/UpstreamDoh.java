@@ -5,8 +5,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * @author kang.zhang
@@ -17,23 +19,29 @@ import java.net.URL;
 public class UpstreamDoh {
 
     @Value("${dns.servers.http.url}")
-    private String  defaultHttpUrl;
+    private String defaultHttpUrl;
 
-    private String httpUrl;
+    private URL url;
 
-    public void setHttpUrl(String httpUrl) {
-        this.httpUrl = httpUrl;
+
+    public void setUrl(String url) {
+        try {
+            this.url = new URL(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
     }
 
-    public URL getUrl() throws MalformedURLException {
-        if(httpUrl != null){
+    public URL getUrl(){
+        if(this.url == null){
             try {
-                return new URL(httpUrl);
+                this.url = new URL(this.defaultHttpUrl);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
-
         }
-        return new URL(defaultHttpUrl);
+        return this.url;
+
     }
+
 }
