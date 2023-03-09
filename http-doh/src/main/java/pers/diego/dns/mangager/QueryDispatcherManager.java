@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
+import pers.diego.dns.bo.CommonResult;
 import pers.diego.dns.bo.DomainTree;
 import pers.diego.dns.component.UpstreamDoh;
 import pers.diego.dns.dto.Packet;
@@ -15,7 +16,9 @@ import pers.diego.dns.reslove.UdpResolver;
 import pers.diego.dns.util.DomainTreeUtil;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
@@ -43,6 +46,22 @@ public class QueryDispatcherManager {
 
     @Value("${dns.mod}")
     private int mod;
+
+    public String getUdpAddress() {
+        return udpAddress;
+    }
+
+    public void setUdpAddress(String udpAddress) {
+        this.udpAddress = udpAddress;
+    }
+
+    public int getUdpPort() {
+        return udpPort;
+    }
+
+    public void setUdpPort(int udpPort) {
+        this.udpPort = udpPort;
+    }
 
     @Value("${dns.domain.gfwPath}")
     private String gfwPath;
@@ -124,5 +143,7 @@ public class QueryDispatcherManager {
         }
 
     }
+
+
 
 }

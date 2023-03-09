@@ -24,12 +24,8 @@ public class UpstreamDoh {
     private URL url;
 
 
-    public void setUrl(String url) {
-        try {
-            this.url = new URL(url);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+    public void setDohUrl(URL url)  {
+        this.url = url;
     }
 
     public URL getUrl(){

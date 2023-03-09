@@ -66,8 +66,13 @@ public class Listener {
     }
     @RequestMapping(value = "/dns-query/set-doh", method = {RequestMethod.POST})
     public CommonResult setMod(@RequestParam("url") String url) {
-        return domainService.changeUpStreamDoh(url);
+        return dnsQueryService.changeUpStreamDoh(url);
 
+    }
+
+    @RequestMapping(value = "/dns-query/set-udp", method = {RequestMethod.POST})
+    public CommonResult setMod(@RequestParam("address") String address, @RequestParam(value = "port", defaultValue = "53") int port) {
+        return dnsQueryService.changUpStreamUdp(address, port);
     }
 
     private HttpEntity<byte[]> dnsQuery(final byte[] request) throws Exception {
