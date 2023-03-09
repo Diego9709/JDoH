@@ -6,7 +6,7 @@ dns:
       address: 114.114.114.114
       port: 53
     http:
-      url: https://dns.diego.org.cn/dns-query
+      url: https://dns.diego.run/dns-query
       url_backup: https://dns.aliyun/com/dns-query
   mod: 1
   domain:
