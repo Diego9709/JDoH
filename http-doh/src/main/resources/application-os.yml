@@ -1,0 +1,14 @@
+dns:
+  listen:
+    port: 53
+  servers:
+    udp:
+      address: 1.1.1.1
+      port: 53
+    http:
+      url: https://dns.google/dns-query
+      url_backup: https://1.1.1.1/dns-query
+  mod: 2
+  domain:
+    gfwPath: domain/gfw.txt
+    cnPath: domain/gfw.txt

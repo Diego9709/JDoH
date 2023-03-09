@@ -106,6 +106,9 @@ public class QueryDispatcherManager {
     public void setMod_1(){
         this.mod = 1;
     }
+    public void setMod_2() {
+        this.mod = 2;
+    }
 
     public byte[] dispatchUdpQuery(byte[] request) throws IOException {
 
@@ -126,7 +129,7 @@ public class QueryDispatcherManager {
             logger.info("new cn query: " + domains + "\n");
             byte[] raw = udpResolver.resolve(packet, udpAddress,udpPort).copyRaw();
             return  raw;
-        }else{
+        }else if (mod == 0){
             DomainTree cnDomainTree = DomainTreeUtil.getCnDomainTree(cnPath);
             for(String domain : domains){
                 if(cnDomainTree.include(domain)){
@@ -140,6 +143,9 @@ public class QueryDispatcherManager {
             URL url = this.upstreamDoh.getUrl();
             Packet resolve = httpResolver.resolve(packet, url);
             return  resolve.copyRaw();
+        } else {
+            Packet resolve = udpResolver.resolve(packet, udpAddress,udpPort);
+            return resolve.copyRaw();
         }
 
     }

@@ -1,9 +1,3 @@
-server:
-  port: 8080
-spring:
-  profiles:
-    active: main
-
 dns:
   listen:
     port: 53

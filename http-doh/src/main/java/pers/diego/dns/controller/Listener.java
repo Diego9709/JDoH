@@ -61,7 +61,7 @@ public class Listener {
         }else if(mod == 0){
             return dnsQueryService.setAsWhiteMod();
         }else {
-            return CommonResult.failed("Mod param can only be set with 0(white) or 1(black)");
+            return dnsQueryService.setAsDohMod();
         }
     }
     @RequestMapping(value = "/dns-query/set-doh", method = {RequestMethod.POST})

@@ -47,11 +47,16 @@ public class DnsQueryService {
 
     public CommonResult setAsBlackMod(){
         queryDispatcherManager.setMod_1();
-        return CommonResult.success("设置成功");
+        return CommonResult.success("设置成功: mod_0");
     }
     public CommonResult setAsWhiteMod(){
         queryDispatcherManager.setMod_0();
-        return CommonResult.success("设置成功");
+        return CommonResult.success("设置成功: mod_1");
+    }
+
+    public CommonResult setAsDohMod() {
+        queryDispatcherManager.setMod_2();
+        return CommonResult.success("设置成功: mod_2");
     }
 
     public CommonResult changUpStreamUdp(String udpAddress, int udpPort){
@@ -82,7 +87,6 @@ public class DnsQueryService {
         return CommonResult.success("修改成功");
 
     }
-
 
 
 
