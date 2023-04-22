@@ -68,6 +68,7 @@ public class UdpServer {
         public void run() {
             Packet packet = new Packet(datagramPacket.getData());
             try {
+                logger.info("Received from port 53.");
                 byte[] response = queryDispatcherManager.dispatchUdpQuery(datagramPacket.getData());
                 DatagramPacket ans = new DatagramPacket(response,response.length,datagramPacket.getAddress(),datagramPacket.getPort());
                 socket.send(ans);

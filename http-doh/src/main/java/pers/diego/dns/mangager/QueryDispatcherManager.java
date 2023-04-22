@@ -144,7 +144,7 @@ public class QueryDispatcherManager {
             Packet resolve = httpResolver.resolve(packet, url);
             return  resolve.copyRaw();
         } else {
-            logger.info("new doh query: " + domains + "\n");
+            logger.info("new query: " + domains + "\n");
             Packet resolve = udpResolver.resolve(packet, udpAddress,udpPort);
             return resolve.copyRaw();
         }

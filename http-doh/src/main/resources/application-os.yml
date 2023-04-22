@@ -3,7 +3,7 @@ dns:
     port: 53
   servers:
     udp:
-      address: 1.1.1.1
+      address: 8.8.4.4
       port: 53
     http:
       url: https://dns.google/dns-query
