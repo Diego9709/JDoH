@@ -47,16 +47,26 @@ public class DnsQueryService {
 
     public CommonResult setAsBlackMod(){
         queryDispatcherManager.setMod_1();
-        return CommonResult.success("设置成功: mod_0");
+        return CommonResult.success("设置成功: mod_0， 白名单模式。");
     }
     public CommonResult setAsWhiteMod(){
         queryDispatcherManager.setMod_0();
-        return CommonResult.success("设置成功: mod_1");
+        return CommonResult.success("设置成功: mod_1，黑名单模式。");
     }
 
     public CommonResult setAsDohMod() {
         queryDispatcherManager.setMod_2();
-        return CommonResult.success("设置成功: mod_2");
+        return CommonResult.success("设置成功: mod_2，DoH模式。");
+    }
+
+    public CommonResult setAsUdpMod() {
+        queryDispatcherManager.setMod_3();
+        return CommonResult.success("设置成功: mod_3, UDP模式。");
+    }
+
+    public CommonResult getMod() {
+        String mod = String.valueOf(queryDispatcherManager.getMod());
+        return CommonResult.success(mod);
     }
 
     public CommonResult changUpStreamUdp(String udpAddress, int udpPort){
@@ -87,7 +97,5 @@ public class DnsQueryService {
         return CommonResult.success("修改成功");
 
     }
-
-
 
 }

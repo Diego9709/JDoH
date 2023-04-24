@@ -109,6 +109,13 @@ public class QueryDispatcherManager {
     public void setMod_2() {
         this.mod = 2;
     }
+    public void setMod_3() {
+        this.mod = 3;
+    }
+
+    public int getMod() {
+        return mod;
+    }
 
     public byte[] dispatchUdpQuery(byte[] request) throws IOException {
 
@@ -116,41 +123,44 @@ public class QueryDispatcherManager {
 
         List<String> domains = packet.getQuestions().stream().map(question -> question.getName().getDomain()).collect(Collectors.toList());
 
-        if(mod == 1){
-            DomainTree gfwDomainTree = DomainTreeUtil.getGfwDomainTree(gfwPath);
-            URL url = this.upstreamDoh.getUrl();
-            for(String domain : domains){
-                if(gfwDomainTree.include(domain)){
-                    logger.info("new gfw query: " + domains + "\n");
-                    Packet resolve = httpResolver.resolve(packet, url);
-                    return resolve.copyRaw();
-                }
-            }
-            logger.info("new cn query: " + domains + "\n");
-            byte[] raw = udpResolver.resolve(packet, udpAddress,udpPort).copyRaw();
-            return  raw;
-        }else if (mod == 0){
+        if (mod == 0){
             DomainTree cnDomainTree = DomainTreeUtil.getCnDomainTree(cnPath);
             for(String domain : domains){
                 if(cnDomainTree.include(domain)){
-                    logger.info("new cn query: " + domains + "\n");
+                    logger.info("new udp-cn query: " + domains + "\n");
                     Packet resolve = udpResolver.resolve(packet, udpAddress,udpPort);
                     return resolve.copyRaw();
                 }
 
             }
-            logger.info("new gfw query: " + domains + "\n");
+            logger.info("new doh-gfw query: " + domains + "\n");
             URL url = this.upstreamDoh.getUrl();
             Packet resolve = httpResolver.resolve(packet, url);
             return  resolve.copyRaw();
+        }else if (mod == 1){
+            DomainTree gfwDomainTree = DomainTreeUtil.getGfwDomainTree(gfwPath);
+            URL url = this.upstreamDoh.getUrl();
+            for(String domain : domains){
+                if(gfwDomainTree.include(domain)){
+                    logger.info("new doh-gfw query: " + domains + "\n");
+                    Packet resolve = httpResolver.resolve(packet, url);
+                    return resolve.copyRaw();
+                }
+            }
+            logger.info("new udp-cn query: " + domains + "\n");
+            byte[] raw = udpResolver.resolve(packet, udpAddress,udpPort).copyRaw();
+            return  raw;
+        } else if (mod == 2) {
+            logger.info("new doh query: " + domains + "\n");
+            URL url = this.upstreamDoh.getUrl();
+            Packet resolve = httpResolver.resolve(packet, url);
+            return resolve.copyRaw();
         } else {
-            logger.info("new query: " + domains + "\n");
+            logger.info("new udp query: " + domains + "\n");
             Packet resolve = udpResolver.resolve(packet, udpAddress,udpPort);
             return resolve.copyRaw();
         }
 
     }
-
-
 
 }

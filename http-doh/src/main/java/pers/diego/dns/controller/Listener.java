@@ -2,10 +2,7 @@ package pers.diego.dns.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pers.diego.dns.bo.CommonResult;
 import pers.diego.dns.service.DnsQueryService;
 import pers.diego.dns.service.DomainService;
@@ -60,8 +57,12 @@ public class Listener {
             return dnsQueryService.setAsBlackMod();
         }else if(mod == 0){
             return dnsQueryService.setAsWhiteMod();
-        }else {
+        }else if (mod == 2) {
             return dnsQueryService.setAsDohMod();
+        } else if (mod == 3) {
+            return dnsQueryService.setAsUdpMod();
+        } else {
+            return CommonResult.failed("mod参数错误");
         }
     }
     @RequestMapping(value = "/dns-query/set-doh", method = {RequestMethod.POST})
@@ -73,6 +74,11 @@ public class Listener {
     @RequestMapping(value = "/dns-query/set-udp", method = {RequestMethod.POST})
     public CommonResult setMod(@RequestParam("address") String address, @RequestParam(value = "port", defaultValue = "53") int port) {
         return dnsQueryService.changUpStreamUdp(address, port);
+    }
+
+    @RequestMapping(value = "/dns-query/get-mod", method = {RequestMethod.GET})
+    public CommonResult getMod() {
+        return dnsQueryService.getMod();
     }
 
     private HttpEntity<byte[]> dnsQuery(final byte[] request) throws Exception {
